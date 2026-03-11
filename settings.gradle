@@ -1,1 +1,6 @@
 rootProject.name = 'goalmentor'
+
+include 'shared'
+include 'user-service'
+include 'project-service'
+include 'post-service'
