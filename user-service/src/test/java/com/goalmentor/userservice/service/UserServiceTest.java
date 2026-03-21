@@ -3,6 +3,7 @@ package com.goalmentor.userservice.service;
 
 import com.goalmentor.userservice.dto.UserRequest;
 import com.goalmentor.userservice.dto.UserResponse;
+import com.goalmentor.userservice.entity.Role;
 import com.goalmentor.userservice.entity.User;
 import com.goalmentor.userservice.mapper.UserMapper;
 import com.goalmentor.userservice.repository.UserRepository;
@@ -45,7 +46,7 @@ class UserServiceTest {
         User user = User.builder()
                 .email("user@test.com")
                 .username("user")
-                .role("USER")
+                .role(Role.USER)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -54,7 +55,7 @@ class UserServiceTest {
                 .id(1L)
                 .email("user@test.com")
                 .username("user")
-                .role("USER")
+                .role(Role.USER)
                 .build();
 
         when(userMapper.toEntity(request)).thenReturn(user);
@@ -64,7 +65,7 @@ class UserServiceTest {
         UserResponse result = userService.createUser(request);
 
         assertThat(result.getEmail()).isEqualTo("user@test.com");
-        assertThat(result.getRole()).isEqualTo("USER");
+        assertThat(result.getRole()).isEqualTo(Role.USER);
         verify(userRepository, times(1)).save(any());
     }
 
