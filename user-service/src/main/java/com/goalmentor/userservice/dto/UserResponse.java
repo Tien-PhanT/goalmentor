@@ -1,5 +1,6 @@
 package com.goalmentor.userservice.dto;
 
+import com.goalmentor.userservice.entity.Role;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,6 +14,6 @@ public class UserResponse {
     private String username;
     private String fullName;
     private String avatarUrl;
-    private String role;
+    private Role role;
     private LocalDateTime createdAt;
 }

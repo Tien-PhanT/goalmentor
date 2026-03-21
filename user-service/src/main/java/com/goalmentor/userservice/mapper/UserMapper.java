@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "role", constant = "USER")
+    @Mapping(target = "role", expression = "java(com.goalmentor.userservice.entity.Role.USER)")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "avatarUrl", ignore = true)
