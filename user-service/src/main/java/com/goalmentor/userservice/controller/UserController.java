@@ -3,6 +3,7 @@ package com.goalmentor.userservice.controller;
 import com.goalmentor.userservice.dto.UserRequest;
 import com.goalmentor.userservice.dto.UserResponse;
 import com.goalmentor.userservice.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> craeteUser(@RequestBody UserRequest request){
+    public ResponseEntity<UserResponse> craeteUser(@Valid @RequestBody UserRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
     }
 
