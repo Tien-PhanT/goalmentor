@@ -5,6 +5,7 @@ import com.goalmentor.userservice.dto.UserRequest;
 import com.goalmentor.userservice.dto.UserResponse;
 import com.goalmentor.userservice.entity.Role;
 import com.goalmentor.userservice.entity.User;
+import com.goalmentor.userservice.exception.UserNotFoundException;
 import com.goalmentor.userservice.mapper.UserMapper;
 import com.goalmentor.userservice.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -74,8 +75,8 @@ class UserServiceTest {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.getUserById(99L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("User not found");
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage("User not found with id: 99");
     }
 
     @Test
@@ -90,5 +91,64 @@ class UserServiceTest {
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getEmail()).isEqualTo("user@test.com");
+    }
+
+    @Test
+    void updateUser_shouldReturnUpdatedUser() {
+        UserRequest request = new UserRequest();
+        request.setUsername("alex");
+        request.setEmail("updated@test.com");
+
+        User user = User.builder()
+                .id(1L)
+                .email("user@test.com")
+                .username("user")
+                .role(Role.USER)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        UserResponse response = UserResponse.builder()
+                .id(1L)
+                .email("updated@test.com")
+                .username("alex")
+                .role(Role.USER)
+                .build();
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.save(any())).thenReturn(user);
+        when(userMapper.toResponse(any())).thenReturn(response);
+
+        UserResponse result = userService.updateUser(1L, request);
+
+        assertThat(result.getEmail()).isEqualTo("updated@test.com");
+        assertThat(result.getUsername()).isEqualTo("alex");
+    }
+
+    @Test
+    void updateUser_shouldThrowException_whenUserNotFound() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.updateUser(99L, new UserRequest()))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage("User not found with id: 99");
+    }
+
+    @Test
+    void deleteUser_shouldThrowException_whenUserNotFound() {
+        when(userRepository.existsById(99L)).thenReturn(false);
+
+        assertThatThrownBy(() -> userService.deleteUser(99L))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage("User not found with id: 99");
+    }
+
+    @Test
+    void deleteUser_shouldDeleteSuccessfully() {
+        when(userRepository.existsById(1L)).thenReturn(true);
+
+        userService.deleteUser(1L);
+
+        verify(userRepository, times(1)).deleteById(1L);
     }
 }
